@@ -1,0 +1,199 @@
+🚕 Trips and Users — SQL
+📌 Problem
+
+Analyze the cancellation rate of taxi trips for each day while considering only trips where both the client and the driver are not banned.
+
+The goal is to calculate the percentage of valid trips that were cancelled on each day.
+
+Cancellation Types
+
+A trip is considered cancelled when its status is:
+
+cancelled_by_driver
+cancelled_by_client
+🗃️ Tables
+Trips
+Column	Description
+id	Unique trip ID
+client_id	ID of the client
+driver_id	ID of the driver
+city_id	ID of the city
+status	Trip status
+request_at	Date when the trip was requested
+Users
+Column	Description
+users_id	Unique user ID
+banned	Whether the user is banned
+role	User role (client / driver)
+🎯 Objective
+
+Calculate the Cancellation Rate for each day from:
+
+2013-10-01
+2013-10-02
+2013-10-03
+
+Only trips involving non-banned clients and non-banned drivers should be included.
+
+Formula
+Cancellation Rate =
+Cancelled Valid Trips / Total Valid Trips
+
+The result should be rounded to 2 decimal places.
+
+💡 Approach
+Step 1 — Join the Users table twice
+
+The Users table contains both clients and drivers, so we join it twice:
+
+JOIN Users c
+    ON t.client_id = c.users_id
+
+JOIN Users d
+    ON t.driver_id = d.users_id
+
+Here:
+
+c represents the client.
+d represents the driver.
+Step 2 — Remove banned users
+
+Both the client and driver must be unbanned:
+
+WHERE c.banned = 'No'
+  AND d.banned = 'No'
+Step 3 — Identify cancelled trips
+
+Use CASE WHEN to count cancelled trips:
+
+CASE
+    WHEN status IN ('cancelled_by_driver', 'cancelled_by_client')
+    THEN 1
+    ELSE 0
+END
+Step 4 — Calculate the cancellation rate
+Cancelled Trips / Total Valid Trips
+Step 5 — Group the result by date
+GROUP BY request_at
+✅ SQL Solution
+SELECT
+    request_at AS Day,
+    ROUND(
+        SUM(
+            CASE
+                WHEN status IN ('cancelled_by_driver', 'cancelled_by_client')
+                THEN 1
+                ELSE 0
+            END
+        ) / COUNT(*),
+        2
+    ) AS `Cancellation Rate`
+FROM Trips t
+JOIN Users c
+    ON t.client_id = c.users_id
+JOIN Users d
+    ON t.driver_id = d.users_id
+WHERE c.banned = 'No'
+  AND d.banned = 'No'
+  AND request_at BETWEEN '2013-10-01' AND '2013-10-03'
+GROUP BY request_at
+ORDER BY request_at;
+📊 Expected Output
+Day	Cancellation Rate
+2013-10-01	0.33
+2013-10-02	0.00
+2013-10-03	0.50
+🧠 SQL Concepts Used
+
+This problem helped me practice:
+
+JOIN
+Self-Join / Multiple Joins on the Same Table
+CASE WHEN
+IN
+SUM()
+COUNT()
+ROUND()
+GROUP BY
+ORDER BY
+Date filtering
+Conditional aggregation
+Calculating ratios and percentages
+🔍 Important Learning
+
+One important part of this problem is understanding that cancelled trips should not be filtered out.
+
+For example, this would be incorrect:
+
+WHERE status = 'completed'
+
+because cancelled trips are required to calculate the numerator.
+
+Instead, all valid trips should remain in the dataset, and CASE WHEN should identify which ones were cancelled.
+
+Another important point is that both users must be checked for the banned status:
+
+c.banned = 'No'
+AND d.banned = 'No'
+⏱️ Complexity
+
+Let N be the number of rows in the Trips table.
+
+Time Complexity
+
+Approximately:
+
+O(N)
+
+assuming appropriate indexing on the join/filter columns.
+
+Space Complexity
+
+Approximately:
+
+O(D)
+
+where D represents the number of distinct dates being grouped.
+
+💼 Interview Takeaway
+
+This problem is useful for Data Analyst and Data Engineer SQL interviews because it combines multiple real-world SQL concepts in one query.
+
+Key Pattern
+JOIN
+   ↓
+Filter invalid records
+   ↓
+Conditional aggregation
+   ↓
+GROUP BY date
+   ↓
+Calculate rate
+   ↓
+ROUND result
+
+This pattern can also be applied to:
+
+Order cancellation analysis
+Payment failure rates
+Customer churn analysis
+Delivery success rates
+Support ticket resolution rates
+Transaction failure analysis
+📚 Problem
+
+LeetCode 262 — Trips and Users
+
+Difficulty: Medium
+
+Category:
+
+SQL
+Database
+Conditional Aggregation
+JOIN
+👨‍💻 Author
+
+Vikas Yadav
+
+Aspiring Data Engineer | SQL | Python | Power BI | Microsoft Fabric
