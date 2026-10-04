@@ -1,0 +1,176 @@
+# 🔄 Swap Salary — MySQL
+
+## 📌 Problem
+
+Given a `Salary` table containing employee information, swap all values in the `sex` column:
+
+* `'m'` → `'f'`
+* `'f'` → `'m'`
+
+The goal is to perform the swap using an SQL `UPDATE` statement.
+
+---
+
+## 📊 Example
+
+### Before
+
+| id | name | sex | salary |
+| -: | ---- | :-: | -----: |
+|  1 | A    |  m  |   2500 |
+|  2 | B    |  f  |   3000 |
+|  3 | C    |  m  |   3500 |
+|  4 | D    |  f  |   4000 |
+
+### After
+
+| id | name | sex | salary |
+| -: | ---- | :-: | -----: |
+|  1 | A    |  f  |   2500 |
+|  2 | B    |  m  |   3000 |
+|  3 | C    |  f  |   3500 |
+|  4 | D    |  m  |   4000 |
+
+---
+
+# 💡 Approach 1 — Using `CASE`
+
+### Explanation
+
+The `CASE` expression checks the current value of the `sex` column:
+
+* If `sex = 'm'`, change it to `'f'`.
+* If `sex = 'f'`, change it to `'m'`.
+
+### SQL Query
+
+```sql
+UPDATE Salary
+SET sex = CASE
+    WHEN sex = 'm' THEN 'f'
+    WHEN sex = 'f' THEN 'm'
+END;
+```
+
+### Why use `CASE`?
+
+`CASE` is useful when you have **multiple conditions** or more complex business logic.
+
+For example:
+
+```sql
+CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    WHEN condition3 THEN result3
+END
+```
+
+---
+
+# ⚡ Approach 2 — Using MySQL `IF()`
+
+### Explanation
+
+MySQL's `IF()` function follows this structure:
+
+```sql
+IF(condition, value_if_true, value_if_false)
+```
+
+For this problem:
+
+* If `sex = 'm'` → return `'f'`
+* Otherwise → return `'m'`
+
+### SQL Query
+
+```sql
+UPDATE Salary
+SET sex = IF(sex = 'm', 'f', 'm');
+```
+
+### Why use `IF()`?
+
+It is shorter and convenient when there are only **two possible conditions/results**.
+
+---
+
+# 🔍 Comparison
+
+| Feature               | `CASE`      | `IF()`                     |
+| --------------------- | ----------- | -------------------------- |
+| SQL standard          | ✅ Yes       | ❌ MySQL-specific           |
+| MySQL support         | ✅           | ✅                          |
+| Readability           | High        | High for simple conditions |
+| Multiple conditions   | ✅ Excellent | ⚠️ Less suitable           |
+| Short solution        | ❌           | ✅                          |
+| Best for this problem | ✅           | ⭐                          |
+
+---
+
+# ⏱️ Complexity
+
+Both approaches have the same complexity.
+
+### Time Complexity
+
+```text
+O(n)
+```
+
+Every row in the `Salary` table is evaluated.
+
+### Space Complexity
+
+```text
+O(1)
+```
+
+No additional data structure is required.
+
+---
+
+# 🧠 Key SQL Concepts
+
+This problem helps practice:
+
+* `UPDATE`
+* `SET`
+* `CASE`
+* `IF()`
+* Conditional expressions
+* Data transformation
+
+---
+
+# ⭐ Recommended Solution
+
+For **MySQL and LeetCode**, the shortest solution is:
+
+```sql
+UPDATE Salary
+SET sex = IF(sex = 'm', 'f', 'm');
+```
+
+However, understanding the `CASE` approach is important because `CASE` is more flexible and is commonly used in SQL interviews.
+
+---
+
+## 🎯 Interview Takeaway
+
+If an interviewer asks:
+
+> **"How would you swap two values in SQL?"**
+
+You can explain:
+
+> "I can use a conditional expression inside an `UPDATE` statement. In MySQL, I can use `IF()` for a simple two-way condition, while `CASE` is more flexible for multiple conditions."
+
+---
+
+## 🛠️ Technology
+
+* **Database:** MySQL
+* **Language:** SQL
+* **Problem Type:** UPDATE / Data Manipulation
