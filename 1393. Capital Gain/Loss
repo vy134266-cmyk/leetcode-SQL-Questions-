@@ -1,0 +1,79 @@
+# LeetCode 1393 — Capital Gain/Loss
+
+## 📌 Problem Description
+
+**Difficulty:** Medium  
+**Topics:** SQL, Aggregation, CASE WHEN, GROUP BY  
+**Platform:** [LeetCode 1393](https://leetcode.com/problems/capital-gainloss/)
+
+The `Stocks` table records stock transactions, including the stock name, operation type (`Buy` or `Sell`), operation day, and price.
+
+The task is to calculate the total capital gain or loss for each stock.
+
+- **Buy:** The price is treated as a negative value.
+- **Sell:** The price is treated as a positive value.
+
+## 🗂️ Table Structure
+
+| Column | Type | Description |
+|---|---|---|
+| stock_name | varchar | Name of the stock |
+| operation | enum | Buy or Sell |
+| operation_day | int | Day of the transaction |
+| price | int | Transaction price |
+
+## 💡 Approach
+
+1. Use `CASE WHEN` to assign negative values to purchases and positive values to sales.
+2. Use `SUM()` to calculate the net capital gain or loss.
+3. Use `GROUP BY stock_name` to calculate the result for each stock.
+
+### Formula
+
+Capital Gain/Loss = Total Sell Price − Total Buy Price
+
+## 💻 SQL Solution
+
+```sql
+SELECT
+    stock_name,
+    SUM(
+        CASE
+            WHEN operation = 'Sell' THEN price
+            WHEN operation = 'Buy' THEN -price
+        END
+    ) AS capital_gain_loss
+FROM Stocks
+GROUP BY stock_name;
+```
+
+## 📊 Example
+
+| stock_name | capital_gain_loss |
+|---|---:|
+| Corona Masks | 205 |
+| Handbags | 200 |
+| Leetcode | -100 |
+
+**Interpretation:**
+- `Corona Masks`: Capital gain of 205.
+- `Handbags`: Capital gain of 200.
+- `Leetcode`: Capital loss of 100.
+
+## 🧠 SQL Concepts Learned
+
+- `CASE WHEN`
+- Aggregate function: `SUM()`
+- `GROUP BY`
+- Conditional aggregation
+- Calculating profit and loss using SQL
+
+## 🎯 Key Takeaway
+
+This problem demonstrates how SQL can calculate net financial outcomes from transaction records using conditional logic and aggregation.
+
+---
+
+**LeetCode Problem:** [1393. Capital Gain/Loss](https://leetcode.com/problems/capital-gainloss/)  
+**Language:** SQL  
+**Status:** Solved
